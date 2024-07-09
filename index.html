@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slideshow</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            background-color: black;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align content at the top */
+        }
+
+        .slideshow-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            margin: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mySlides {
+            display: none;
+            width: 80%; /* Adjusted width */
+            height: 80%; /* Adjusted height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 1s ease-in-out; /* Smooth transition */
+            opacity: 0; /* Start with opacity 0 */
+        }
+
+        .mySlides.fade-in {
+            opacity: 1;
+        }
+
+        .mySlides img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border: 5px solid #fff; /* Add border to images */
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            user-select: none;
+            z-index: 2;
+        }
+
+        .prev {
+            left: 20px; /* Adjusted position */
+            border-radius: 0 3px 3px 0;
+        }
+
+        .next {
+            right: 20px; /* Adjusted position */
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .clock {
+            color: #f2f2f2;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            width: 100%;
+            position: absolute;
+            bottom: 20px; /* Position clock at the bottom */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            opacity: 0; /* Start with opacity 0 */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .clock-trademark {
+            color: #f2f2f2;
+            font-size: 12px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            width: 100%;
+            position: absolute;
+            bottom: 5px; /* Adjusted position */
+            opacity: 0.75; /* Reduced opacity */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            opacity: 0; /* Start with opacity 0 */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .clock-trademark a {
+            color: #f2f2f2;
+            text-decoration: none;
+        }
+
+        .clock-trademark a:hover {
+            text-decoration: underline;
+        }
+
+        .logo-image {
+    position: absolute;
+    top: 50px; /* Adjusted top position */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%) scale(1.0); /* Center horizontally and scale */
+    width: 200px; /* Adjusted width */
+    z-index: 2;
+    opacity: 0; /* Start with opacity 0 */
+    transition: opacity 1s ease-in-out;
+}
+
+
+        .volume-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            opacity: 0; /* Start with opacity 0 */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .volume-slider {
+            width: 120px; /* Increased width for better interaction */
+            -webkit-appearance: none;
+            appearance: none;
+            height: 10px; /* Adjusted height */
+            background: #333; /* Dark background */
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .volume-slider:hover {
+            opacity: 1;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: gray; /* Gray thumb */
+            cursor: pointer;
+            border-radius: 50%; /* Circular thumb */
+            border: 2px solid #333; /* Border for better visibility */
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: gray; /* Gray thumb */
+            cursor: pointer;
+            border-radius: 50%; /* Circular thumb */
+            border: 2px solid #333; /* Border for better visibility */
+        }
+
+        .play-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #404040; /* Dark gray button */
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 20px; /* Rounded button */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            transition: background-color 0.3s, transform 0.3s;
+            opacity: 0; /* Start with opacity 0 */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .play-button:hover {
+            background-color: #333333; /* Darker gray */
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+
+        .next-song-button {
+            position: absolute;
+            top: 70px; /* Moved lower */
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #404040; /* Dark gray button */
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 20px; /* Rounded button */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            transition: background-color 0.3s, transform 0.3s;
+            opacity: 0; /* Start with opacity 0 */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .next-song-button:hover {
+            background-color: #333333; /* Darker gray */
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <div class="mySlides fade">
+            <img src="img1.jpg" alt="Slide 1">
+        </div>
+        <div class="mySlides fade">
+            <img src="img2.jpg" alt="Slide 2">
+        </div>
+        <div class="mySlides fade">
+            <img src="img3.jpg" alt="Slide 3">
+        </div>
+        <!-- Add other slides here -->
+        <!-- ... -->
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
+    </div>
+    <div style="text-align: center; position: relative; z-index: 2;">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <!-- Add other dots here -->
+        <!-- ... -->
+    </div>
+    
+    <img src="path_to_your_logo_image.png" alt="Logo" class="logo-image">
+
+    <div class="clock" id="clock">
+        <!-- Clock will be updated dynamically -->
+    </div>
+
+    <div class="clock-trademark">
+        <a href="https://www.youtube.com/channel/UCsaaCiqbVYc4pbuCeGKXSXQ" target="_blank" style="opacity: 0.75;">TheStRiK3R1998</a>
+    </div>
+
+    <div class="volume-control" id="volumeControl">
+        <input type="range" min="0" max="1" step="0.01" value="1" class="volume-slider" id="volumeSlider">
+    </div>
+
+    <button class="play-button" onclick="togglePlayPause()">Play Music</button>
+    <button class="next-song-button" onclick="shuffleSongs()">Next Song</button>
+
+    <audio id="background-audio" src="" autoplay style="display: none;"></audio>
+
+    <script>
+        let slideIndex;
+        let slides;
+        let dots;
+        let audio = document.getElementById('background-audio');
+        let isPlaying = false;
+        let songs = [];
+
+        function initSlides() {
+            slides = document.getElementsByClassName("mySlides");
+            dots = document.getElementsByClassName("dot");
+
+            // Initialize slideIndex randomly
+            slideIndex = Math.floor(Math.random() * slides.length);
+            showSlides(slideIndex);
+        }
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n - 1);
+        }
+
+        function showSlides(n) {
+            if (n >= slides.length) { slideIndex = 0; }
+            if (n < 0) { slideIndex = slides.length - 1; }
+
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+
+            slides[slideIndex].style.display = "flex";
+            if (dots[slideIndex]) dots[slideIndex].className += " active";
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        function updateVolume() {
+            audio.volume = parseFloat(document.getElementById('volumeSlider').value);
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                document.querySelector('.play-button').textContent = 'Play Music';
+            } else {
+                playRandomSong();
+                document.querySelector('.play-button').textContent = 'Pause Music';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function playRandomSong() {
+            const randomIndex = Math.floor(Math.random() * songs.length);
+            const randomSong = songs[randomIndex];
+            audio.src = randomSong;
+            audio.play();
+            isPlaying = true;
+        }
+
+        function shuffleSongs() {
+            songs = shuffleArray(songs);
+            playRandomSong();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSlides();
+            updateClock();
+            setInterval(updateClock, 60000); // Update the clock every minute
+
+            document.getElementById('volumeSlider').addEventListener('input', updateVolume);
+            updateVolume(); // Set initial volume
+
+            // Replace with your actual song files
+            songs = [
+                "Juice WRLD Songs/song1.mp3",
+                "Juice WRLD Songs/song2.mp3",
+                "Juice WRLD Songs/song3.mp3"
+            ];
+
+            // Fade-in animation for slides and other elements
+            setTimeout(() => {
+                Array.from(slides).forEach(slide => {
+                    slide.classList.add('fade-in');
+                });
+
+                // Add other elements to fade in
+                document.querySelector('.logo-image').style.opacity = 1;
+                document.querySelector('.clock').style.opacity = 1;
+                document.querySelector('.clock-trademark').style.opacity = 1;
+                document.querySelector('.volume-control').style.opacity = 1;
+                document.querySelector('.play-button').style.opacity = 1;
+                document.querySelector('.next-song-button').style.opacity = 1;
+            }, 500); // Adjust delay as needed
+        });
+    </script>
+</body>
+</html>
